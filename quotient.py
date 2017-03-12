@@ -6,17 +6,15 @@ import locale
 import sys
 
 
-def divide_(dividend, divisor, radix):
+def divide_(dividend, divisor):
     """ Convert to the specified base and divide.
 
     Parameters
     ----------
-    dividend : int (or coercible to int)
+    dividend : int
         The numerator, `a`, in `a divided by b`.
-    divisor : int (or coercible to int)
+    divisor : int
         The denominator, `b`, in `a divided by b`.
-    radix : int
-        The numeric base in which to divide.
 
     Yields
     ------
@@ -26,17 +24,15 @@ def divide_(dividend, divisor, radix):
 
     Notes
     -----
-    The first output yielded is the only whole-number portion of the quotient.
+    The first result yielded is the sole whole-number portion of the quotient.
 
     """
-    dividend = int(str(dividend), radix)
-    divisor = int(str(divisor), radix)
     while True:
         quotient, remainder = divmod(dividend, divisor)
-        dividend = remainder * radix
+        dividend = remainder * 10
         yield quotient
 
-def divide(dividend, divisor, radix=10, scale=None):
+def divide(dividend, divisor, scale=None):
     """ Convert to the specified base and divide.
 
     Parameters
@@ -45,8 +41,6 @@ def divide(dividend, divisor, radix=10, scale=None):
         The numerator, `a`, in `a divided by b`.
     divisor : int (or coercible to int)
         The denominator, `b`, in `a divided by b`.
-    radix : int, optional
-        The numeric base in which to divide.  Default `10` for decimal.
     scale : int, optional
         An integer representing the number of digits after the decimal point.
         Default `None`, which leads to infinite output (until interrupted).
@@ -59,7 +53,7 @@ def divide(dividend, divisor, radix=10, scale=None):
         A string representation of the repeating decimal.
 
     """
-    quotient = divide_(dividend, divisor, radix)
+    quotient = divide_(int(dividend), int(divisor))
 
     # get the part before the decimal point
     yield str(next(quotient))
@@ -77,14 +71,11 @@ if __name__ == '__main__':
                         help='a number to divide')
     parser.add_argument('divisor', action='store', type=str,
                         help='a number by which to divide')
-    parser.add_argument('-r', '--radix', dest='radix', action='store',
-                        type=int, default=10,
-                        help='a numeric base in which to calculate')
     parser.add_argument('-s', '--scale', dest='scale', action='store',
                         type=int, default=None,
                         help='how long the fractional output should be')
 
     args = parser.parse_args()
 
-    for q in divide(args.dividend, args.divisor, args.radix, args.scale):
+    for q in divide(args.dividend, args.divisor, args.scale):
         print(q, end='')

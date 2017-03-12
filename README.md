@@ -14,8 +14,3 @@ You can cancel by pressing `^C` (control-C) on your keyboard.  If you only want 
     ./quotient 100 17 -s 40
 
 (The `-s` argument can come before or after the dividend and divisor.)
-
-## Does it do any other tricks?
-
-You can also divide in other bases.  More info will be posted soon.
-
