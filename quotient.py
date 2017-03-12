@@ -2,6 +2,7 @@
 
 import argparse
 import itertools
+import locale
 import sys
 
 
@@ -65,7 +66,7 @@ def divide(dividend, divisor, radix=10, scale=None):
 
     # only print decimal point if scale is `None` or non-zero
     if scale != 0:
-        yield '.'
+        yield locale.nl_langinfo(locale.RADIXCHAR)
         for q in itertools.islice(quotient, scale):
             yield str(q)
 
