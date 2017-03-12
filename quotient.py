@@ -5,7 +5,37 @@ import itertools
 import sys
 
 
-def divide(dividend, divisor, radix=10):
+def divide_(dividend, divisor, radix):
+    """ Convert to the specified base and divide.
+
+    Parameters
+    ----------
+    dividend : int (or coercible to int)
+        The numerator, `a`, in `a divided by b`.
+    divisor : int (or coercible to int)
+        The denominator, `b`, in `a divided by b`.
+    radix : int
+        The numeric base in which to divide.
+
+    Yields
+    ------
+    out : int
+        The whole number portion of the quotient (first yield only), followed
+        by successive post-decimal-point volues.
+
+    Notes
+    -----
+    The first output yielded is the only whole-number portion of the quotient.
+
+    """
+    dividend = int(str(dividend), radix)
+    divisor = int(str(divisor), radix)
+    while True:
+        quotient, remainder = divmod(dividend, divisor)
+        dividend = remainder * radix
+        yield quotient
+
+def divide(dividend, divisor, radix=10, scale=None):
     """ Convert to the specified base and divide.
 
     Parameters
@@ -16,18 +46,28 @@ def divide(dividend, divisor, radix=10):
         The denominator, `b`, in `a divided by b`.
     radix : int, optional
         The numeric base in which to divide.  Default `10` for decimal.
+    scale : int, optional
+        An integer representing the number of digits after the decimal point.
+        Default `None`, which leads to infinite output (until interrupted).
+        If this is set to zero or less, neither a decimal point nor anything
+        after will be output.
 
     Yields
     ------
-    A single character of the extended quotient.
+    out : str
+        A string representation of the repeating decimal.
 
     """
-    dividend = int(dividend, radix)
-    divisor = int(divisor, radix)
-    while True:
-        quotient, remainder = divmod(dividend, divisor)
-        dividend = remainder * radix
-        yield quotient
+    quotient = divide_(dividend, divisor, radix)
+
+    # get the part before the decimal point
+    yield str(next(quotient))
+
+    # only print decimal point if scale is `None` or non-zero
+    if scale != 0:
+        yield '.'
+        for q in itertools.islice(quotient, scale):
+            yield str(q)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -45,17 +85,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    scale = args.scale
-    quotient= divide(args.dividend, args.divisor, radix=args.radix)
-
-    # get the part before the decimal point
-    q = next(quotient)
-    print(q, end='')
-
-    # only print decimal point if scale is non-zero
-    if scale != 0:
-        print('.', end='')
-
-    # now display the part after the decimal point
-    for q in itertools.islice(quotient, scale):
+    for q in divide(args.dividend, args.divisor, args.radix, args.scale):
         print(q, end='')
