@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"strings"
 )
 
 // Radix holds the base in which division operations are performed.
@@ -17,9 +16,9 @@ func DivMod(a, b int64) (q, r int64) {
 	return
 }
 
-// Divide divides one number by another out to an infinite number of decimal places.
-func Divide(a, b int64) {
-	for i := 0; ; i++ {
+// Divide divides one number by another out to an specified number of decimal places.
+func Divide(a, b, scale int64) {
+	for i := int64(0); i < scale; i++ {
 		q, r := DivMod(a, b)
 		fmt.Printf("%d", q)
 		if i == 0 {
@@ -30,12 +29,12 @@ func Divide(a, b int64) {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatal("Please supply a fraction to calculate.")
+	if len(os.Args) < 3 {
+		log.Fatal("Usage: go run quotient.go DIVIDEND DIVISOR SCALE")
 	}
 
-	args := strings.Split(os.Args[1], "/")
-	a, _ := strconv.ParseInt(args[0], radix, 64)
-	b, _ := strconv.ParseInt(args[1], radix, 64)
-	Divide(a, b)
+	a, _ := strconv.ParseInt(os.Args[1], radix, 64)
+	b, _ := strconv.ParseInt(os.Args[2], radix, 64)
+	scale, _ := strconv.ParseInt(os.Args[3], radix, 64)
+	Divide(a, b, scale)
 }
