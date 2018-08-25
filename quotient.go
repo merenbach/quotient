@@ -17,13 +17,12 @@ func DivMod(a, b int64) (q, r int64) {
 
 // Divide divides one number by another out to an specified number of decimal places.
 func Divide(a, b int64, scale int) {
-	for i := 0; i <= scale; i++ {
-		q, a_ := DivMod(a*radix, b*radix)
+	q, a_ := DivMod(a*radix, b*radix)
+	fmt.Printf("%d.", q)
+	for i := 0; i < scale; i++ {
 		a = a_
+		q, a_ = DivMod(a*radix, b*radix)
 		fmt.Printf("%d", q)
-		if i == 0 && scale > 0 {
-			fmt.Print(".")
-		}
 		// a = r * radix
 	}
 }
@@ -35,8 +34,8 @@ func main() {
 
 	flag.Parse()
 
-	if *a < 0 || *b < 0 || *scale < 0 {
-		log.Fatal("Dividend, divisor, and scale must be non-negative.")
+	if *a < 1 || *b < 1 || *scale < 1 {
+		log.Fatal("Dividend, divisor, and scale must each be at least one.")
 	}
 
 	Divide(*a, *b, *scale)
