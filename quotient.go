@@ -23,6 +23,7 @@ func Divide(a, b int64, scale int) {
 		q, r = DivMod(r*radix, b*radix)
 		fmt.Printf("%d", q)
 	}
+	fmt.Println()
 }
 
 func main() {
