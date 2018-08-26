@@ -3,9 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
-	"os"
 )
 
 // Radix holds the base in which division operations are performed.
@@ -17,16 +15,12 @@ func DivMod(a, b int64) (q, r int64) {
 	return
 }
 
-// Divide divides one number by another out to an specified number of decimal places.
-func Divide(w io.Writer, a, b int64, scale int, newline bool) {
-	q, r := DivMod(a*radix, b*radix)
-	fmt.Fprintf(w, "%d.", q)
-	for i := 0; i < scale; i++ {
-		q, r = DivMod(r*radix, b*radix)
-		fmt.Fprintf(w, "%d", q)
-	}
-	if newline {
-		fmt.Fprintln(w)
+// Divide returns a generator that returns an endlessly-repeating quotient.
+func Divide(a, b int64) func() int64 {
+	var q int64
+	return func() int64 {
+		q, a = DivMod(a*radix, b*radix)
+		return q
 	}
 }
 
@@ -41,5 +35,10 @@ func main() {
 		log.Fatal("Dividend, divisor, and scale must each be at least one.")
 	}
 
-	Divide(os.Stdout, *a, *b, *scale, true)
+	quotient := Divide(*a, *b)
+	fmt.Printf("%d.", quotient())
+	for i := 0; i < *scale; i++ {
+		fmt.Printf("%d", quotient())
+	}
+	fmt.Println()
 }
