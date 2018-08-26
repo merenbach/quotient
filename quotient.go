@@ -9,18 +9,19 @@ import (
 // Radix holds the base in which division operations are performed.
 const radix = 10
 
-// DivMod returns the integer quotient and remainder of a fraction.
-func DivMod(a, b int64) (q, r int64) {
-	q, r = a/b, a%b
-	return
-}
+// // DivMod returns the integer quotient and remainder of a fraction.
+// func DivMod(a, b int64) (q, r int64) {
+// 	q, r = a/b, a%b
+// 	return
+// }
 
 // Divide returns a generator that returns an endlessly-repeating quotient.
 func Divide(a, b int64) func() int64 {
-	var q int64
+	// var q int64
 	return func() int64 {
-		q, a = DivMod(a*radix, b*radix)
-		return q
+		// q, a = DivMod(a*radix, b*radix)
+		a = radix * (a % b)
+		return a / b
 	}
 }
 
