@@ -20,8 +20,9 @@ func Divide(a, b uint) func() uint {
 	// var q int64
 	return func() uint {
 		// q, a = DivMod(a*radix, b*radix)
-		a = radix * (a % b)
-		return a / b
+		q, r := a/b, a%b
+		a = radix * r
+		return q
 	}
 }
 
