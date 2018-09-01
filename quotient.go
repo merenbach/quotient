@@ -16,9 +16,9 @@ const radix = 10
 // }
 
 // Divide returns a generator that returns an endlessly-repeating quotient.
-func Divide(a, b int64) func() int64 {
+func Divide(a, b uint) func() uint {
 	// var q int64
-	return func() int64 {
+	return func() uint {
 		// q, a = DivMod(a*radix, b*radix)
 		a = radix * (a % b)
 		return a / b
@@ -26,14 +26,14 @@ func Divide(a, b int64) func() int64 {
 }
 
 func main() {
-	a := flag.Int64("dividend", -1, "a number to divide")
-	b := flag.Int64("divisor", -1, "a number by which to divide")
+	a := flag.Uint("dividend", 0, "a number to divide")
+	b := flag.Uint("divisor", 0, "a number by which to divide")
 	scale := flag.Int("scale", 0, "the number of places to calculate after the decimal point")
 
 	flag.Parse()
 
 	if *a < 1 || *b < 1 || *scale < 1 {
-		log.Fatal("Dividend, divisor, and scale must each be at least one.")
+		log.Fatal("The dividend, divisor, and scale must each be at least one.")
 	}
 
 	quotient := Divide(*a, *b)
